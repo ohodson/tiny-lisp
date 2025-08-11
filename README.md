@@ -1,0 +1,159 @@
+# Tiny Lisp Interpreter
+
+A simple, interactive LISP interpreter written in modern C++17. This interpreter implements the core features needed to run basic LISP programs.
+
+## Building
+
+This project uses Bazel as its build system. To build and run:
+
+```bash
+# Build the interpreter
+bazel build :tiny-lisp
+
+# Run in interactive mode
+bazel run :tiny-lisp
+
+# Run a LISP file
+bazel run :tiny-lisp -- examples/factorial.lisp
+
+# Generate compile_commands.json
+bazel run @hedron_compile_commands//:refresh_all
+```
+
+Recommended dependencies:
+
+```bash
+apt install libc++-19-dev libc++abi-19-dev clang-19 clang-19-doc clangd-19 \
+    clang-tidy-19 clang-tools-19 libclang-common-19-dev libclang-cpp19-dev \
+    libclang-cpp19 libclang-rt-19-dev libclang1-19
+```
+
+## Features
+
+### Data Types
+- **Numbers**: Integer and floating-point arithmetic
+- **Strings**: Text literals with escape sequences
+- **Symbols**: Variable and function names  
+- **Lists**: Cons cells and proper lists
+- **Functions**: Built-in and user-defined lambda functions
+
+### Built-in Functions
+
+#### Arithmetic Operations
+- `(+ a b ...)` - Addition
+- `(- a b ...)` - Subtraction (unary negation with one argument)
+- `(* a b ...)` - Multiplication  
+- `(/ a b ...)` - Division (reciprocal with one argument)
+
+#### List Operations
+- `(car list)` - First element of a list
+- `(cdr list)` - Rest of a list (everything after the first element)
+- `(cons a b)` - Create a new cons cell
+- `(list a b ...)` - Create a proper list from arguments
+
+#### Comparison Operations
+- `(= a b)` - Equality test
+- `(< a b)` - Less than (numbers only)
+- `(> a b)` - Greater than (numbers only)
+
+#### Type Predicates
+- `(null? x)` - Test if value is nil
+- `(number? x)` - Test if value is a number
+- `(symbol? x)` - Test if value is a symbol
+
+### Special Forms
+
+#### Control Flow
+- `(if condition then-expr else-expr)` - Conditional evaluation
+- `(quote expr)` - Prevent evaluation (can also use `'expr`)
+
+#### Function Definition
+- `(lambda (param1 param2 ...) body)` - Create anonymous function
+- `(define name value)` - Bind a value to a name
+
+## Usage Examples
+
+### Basic Arithmetic
+```lisp
+lisp> (+ 1 2 3)
+6
+lisp> (* 2 (+ 3 4))
+14
+lisp> (/ 10 2)
+5
+```
+
+### List Manipulation  
+```lisp
+lisp> (cons 1 (cons 2 nil))
+(1 2)
+lisp> (list 1 2 3 4)
+(1 2 3 4)
+lisp> (car (list 1 2 3))
+1
+lisp> (cdr (list 1 2 3))
+(2 3)
+```
+
+### Functions and Variables
+```lisp
+lisp> (define square (lambda (x) (* x x)))
+#<lambda>
+lisp> (square 5)
+25
+lisp> (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1))))))
+#<lambda>
+lisp> (factorial 5)
+120
+```
+
+### Conditionals
+```lisp
+lisp> (if (> 10 5) "greater" "less")
+"greater"
+lisp> (if (null? nil) "empty" "not empty")
+"empty"
+```
+
+### Quoted Expressions
+```lisp
+lisp> (quote (+ 1 2))
+(+ 1 2)
+lisp> '(hello world)
+(hello world)
+```
+
+## Interactive Commands
+
+- `quit`, `exit`, or `:q` - Exit the interpreter
+- `--help` or `-h` - Show usage information
+
+## Architecture
+
+The interpreter is built with a clean modular architecture:
+
+- **`value.hpp/cpp`** - Core data structures (Value, Environment)
+- **`tokenizer.hpp/cpp`** - Lexical analysis and tokenization
+- **`parser.hpp/cpp`** - Parsing tokens into AST
+- **`evaluator.hpp/cpp`** - Expression evaluation and built-in functions
+- **`repl.hpp/cpp`** - Read-Eval-Print loop and file processing
+- **`main.cpp`** - Entry point and command-line handling
+
+## Error Handling
+
+The interpreter provides clear error messages for:
+- Syntax errors during parsing
+- Runtime errors during evaluation  
+- Type mismatches in function calls
+- Unbound variable references
+- Division by zero
+
+## Limitations
+
+This is a minimal LISP implementation focused on core functionality. Notable omissions:
+- Macros
+- Tail call optimization
+- Garbage collection (relies on C++ smart pointers)
+- Advanced numeric types (complex numbers, rationals)
+- File I/O operations
+- Module system
