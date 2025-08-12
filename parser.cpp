@@ -1,6 +1,12 @@
 #include "parser.hpp"
 
+#include <cstddef>
+#include <string>
+#include <utility>
 #include <vector>
+
+#include "tokenizer.hpp"
+#include "value.hpp"
 
 namespace lisp {
 
@@ -137,4 +143,4 @@ std::vector<ValuePtr> Parser::parse_multiple() {
     return results;
 }
 
-}
+}  // namespace lisp

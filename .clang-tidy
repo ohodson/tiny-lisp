@@ -1,0 +1,6 @@
+---
+Checks: |
+  abseil-*,boost-*,bugprone-*,cert-*,clang-analyzer-*,concurrency-*,
+  cppcoreguidelines-*,google-*,hicpp-*,misc-*,-misc-no-recursion,performance-*,
+  portability-*,readability-*
+# modernize-*
