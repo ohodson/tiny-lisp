@@ -88,4 +88,4 @@ void REPL::stop() {
     running = false;
 }
 
-}
+}  // namespace lisp

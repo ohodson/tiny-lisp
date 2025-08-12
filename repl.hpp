@@ -26,4 +26,4 @@ public:
     ValuePtr eval_string(const std::string& input);
 };
 
-}
+}  // namespace lisp
