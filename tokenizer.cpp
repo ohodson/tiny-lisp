@@ -1,6 +1,9 @@
 #include "tokenizer.hpp"
 
 #include <cctype>
+#include <cstddef>
+#include <string>
+#include <vector>
 
 namespace lisp {
 

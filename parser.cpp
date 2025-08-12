@@ -1,6 +1,12 @@
 #include "parser.hpp"
 
+#include <cstddef>
+#include <string>
+#include <utility>
 #include <vector>
+
+#include "tokenizer.hpp"
+#include "value.hpp"
 
 namespace lisp {
 

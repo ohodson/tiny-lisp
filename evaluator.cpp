@@ -1,5 +1,12 @@
 #include "evaluator.hpp"
 
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "value.hpp"
+
 namespace lisp {
 
 Evaluator::Evaluator() {
