@@ -1,17 +1,23 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <span> // Uncomment this if you want to use std::span and your compiler supports C++20
 #include <string>
 
 #include "repl.hpp"
 
-void print_usage(const char* program_name) {
+namespace {
+
+void print_usage(const std::string& program_name) {
   std::cout << "Usage: " << program_name << " [file]\n";
   std::cout << "  If no file is provided, starts interactive REPL mode.\n";
   std::cout << "  If file is provided, evaluates the file and exits.\n";
 }
 
+}  // namespace
+
 int main(int argc, char* argv[]) {
+  auto args = std::span(argv, argc);
   try {
     lisp::REPL repl;
 
@@ -19,11 +25,11 @@ int main(int argc, char* argv[]) {
       // Interactive mode
       repl.run();
     } else if (argc == 2) {
-      // File mode
-      std::string filename = argv[1];
+      std::string const program_name = args[0];
+      std::string const filename = args[1];
 
       if (filename == "--help" || filename == "-h") {
-        print_usage(argv[0]);
+        print_usage(program_name);
         return 0;
       }
 
@@ -43,16 +49,15 @@ int main(int argc, char* argv[]) {
       if (!content.empty()) {
         auto result = repl.eval_string(content);
         if (result) {
-          std::cout << result->to_string() << std::endl;
+          std::cout << result->to_string() << '\n';
         }
       }
     } else {
-      print_usage(argv[0]);
+      print_usage(args[0]);
       return 1;
     }
-
   } catch (const std::exception& e) {
-    std::cerr << "Fatal error: " << e.what() << std::endl;
+    std::cerr << "Fatal error: " << e.what() << '\n';
     return 1;
   }
 

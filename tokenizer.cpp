@@ -11,18 +11,21 @@ Tokenizer::Tokenizer(const std::string& input)
     : input(input), position(0), length(input.length()) {}
 
 char Tokenizer::peek(size_t offset) const {
-  size_t pos = position + offset;
-  if (pos >= length) return '\0';
-  return input[pos];
+  if (size_t const pos = position + offset; pos < length) {
+    return input[pos];
+  }
+  return '\0';
 }
 
 char Tokenizer::advance() {
-  if (position >= length) return '\0';
-  return input[position++];
+  if (position < length) {
+    return input[position++];
+  }
+  return '\0';
 }
 
 void Tokenizer::skip_whitespace() {
-  while (position < length && std::isspace(peek())) {
+  while (position < length && std::isspace(peek()) != 0) {
     advance();
   }
 }
@@ -36,14 +39,14 @@ void Tokenizer::skip_comment() {
 }
 
 Token Tokenizer::read_number() {
-  size_t start_pos = position;
+  size_t const start_pos = position;
   std::string number;
 
   if (peek() == '-' || peek() == '+') {
     number += advance();
   }
 
-  while (position < length && (std::isdigit(peek()) || peek() == '.')) {
+  while (position < length && ((std::isdigit(peek()) != 0) || peek() == '.')) {
     number += advance();
   }
 
@@ -51,15 +54,15 @@ Token Tokenizer::read_number() {
 }
 
 Token Tokenizer::read_string() {
-  size_t start_pos = position;
+  size_t const start_pos = position;
   std::string str;
 
   advance();  // skip opening quote
 
   while (position < length && peek() != '"') {
-    char c = advance();
-    if (c == '\\' && position < length) {
-      char escaped = advance();
+    char const glyph = advance();
+    if (glyph == '\\' && position < length) {
+      char const escaped = advance();
       switch (escaped) {
         case 'n':
           str += '\n';
@@ -81,7 +84,7 @@ Token Tokenizer::read_string() {
           break;
       }
     } else {
-      str += c;
+      str += glyph;
     }
   }
 
@@ -93,10 +96,10 @@ Token Tokenizer::read_string() {
 }
 
 Token Tokenizer::read_symbol() {
-  size_t start_pos = position;
+  size_t const start_pos = position;
   std::string symbol;
 
-  while (position < length && !std::isspace(peek()) && peek() != '(' &&
+  while (position < length && (std::isspace(peek()) == 0) && peek() != '(' &&
          peek() != ')' && peek() != '"' && peek() != ';') {
     symbol += advance();
   }
@@ -113,10 +116,10 @@ Token Tokenizer::next_token() {
     return Token(TokenType::EOF_TOKEN, "", position);
   }
 
-  char c = peek();
-  size_t start_pos = position;
+  char const glyph = peek();
+  size_t const start_pos = position;
 
-  switch (c) {
+  switch (glyph) {
     case '(':
       advance();
       return Token(TokenType::LPAREN, "(", start_pos);
@@ -129,8 +132,8 @@ Token Tokenizer::next_token() {
     case '"':
       return read_string();
     default:
-      if (std::isdigit(c) || (c == '-' && std::isdigit(peek(1))) ||
-          (c == '+' && std::isdigit(peek(1)))) {
+      if ((std::isdigit(glyph) != 0) || (glyph == '-' && (std::isdigit(peek(1)) != 0)) ||
+          (glyph == '+' && (std::isdigit(peek(1)) != 0))) {
         return read_number();
       } else {
         return read_symbol();
@@ -142,9 +145,9 @@ std::vector<Token> Tokenizer::tokenize() {
   std::vector<Token> tokens;
 
   while (true) {
-    Token token = next_token();
+    Token const token = next_token();
     tokens.push_back(token);
-    if (token.type == TokenType::EOF_TOKEN) {
+    if (token.type() == TokenType::EOF_TOKEN) {
       break;
     }
   }

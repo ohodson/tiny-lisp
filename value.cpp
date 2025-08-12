@@ -3,6 +3,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace lisp {
@@ -12,11 +13,11 @@ std::string Value::to_string() const {
     case ValueType::NIL:
       return "nil";
     case ValueType::NUMBER: {
-      double n = as_number();
-      if (n == static_cast<int>(n)) {
-        return std::to_string(static_cast<int>(n));
+      double const number = as_number();
+      if (number == static_cast<int>(number)) {
+        return std::to_string(static_cast<int>(number));
       }
-      return std::to_string(n);
+      return std::to_string(number);
     }
     case ValueType::STRING:
       return "\"" + as_string() + "\"";
@@ -29,7 +30,9 @@ std::string Value::to_string() const {
       bool first = true;
 
       while (current && current->is_cons()) {
-        if (!first) oss << " ";
+        if (!first) {
+          oss << " ";
+        }
         first = false;
 
         oss << current->car()->to_string();
@@ -56,25 +59,25 @@ ValuePtr make_nil() { return std::make_shared<Value>(ValueType::NIL); }
 
 ValuePtr make_number(double n) { return std::make_shared<Value>(n); }
 
-ValuePtr make_string(const std::string& s) {
-  return std::make_shared<Value>(s, ValueType::STRING);
+ValuePtr make_string(const std::string& text) {
+  return std::make_shared<Value>(text, ValueType::STRING);
 }
 
-ValuePtr make_symbol(const std::string& s) {
-  return std::make_shared<Value>(s, ValueType::SYMBOL);
+ValuePtr make_symbol(const std::string& symbol) {
+  return std::make_shared<Value>(symbol, ValueType::SYMBOL);
 }
 
 ValuePtr make_cons(ValuePtr car, ValuePtr cdr) {
   return std::make_shared<Value>(car, cdr);
 }
 
-ValuePtr make_builtin(BuiltinFunction func) {
+ValuePtr make_builtin(const BuiltinFunction& func) {
   return std::make_shared<Value>(func);
 }
 
-ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr body,
-                     std::shared_ptr<Environment> closure) {
-  Lambda lambda{params, body, closure};
+ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr& body,
+                     std::shared_ptr<Environment>&& closure) {
+  Lambda const lambda{params, body, std::move(closure)};
   return std::make_shared<Value>(lambda);
 }
 

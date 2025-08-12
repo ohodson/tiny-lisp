@@ -9,7 +9,8 @@ namespace lisp {
 
 class ParseError : public std::runtime_error {
  public:
-  ParseError(const std::string& message) : std::runtime_error(message) {}
+  explicit ParseError(const std::string& message)
+      : std::runtime_error(message) {}
 };
 
 class Parser {
@@ -27,7 +28,7 @@ class Parser {
   ValuePtr parse_quoted();
 
  public:
-  Parser(const std::vector<Token>& tokens);
+  explicit Parser(const std::vector<Token>& tokens);
   ValuePtr parse();
   std::vector<ValuePtr> parse_multiple();
 };

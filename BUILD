@@ -50,7 +50,7 @@ cc_binary(
         "main.cpp",
     ],
     copts = [
-        "-std=c++17",
+        "-std=c++20",
         "-Wall",
         "-Wextra",
     ],
