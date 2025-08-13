@@ -52,7 +52,7 @@ cc_test(
 
 cc_test(
     name = "evaluator_test",
-    size = "medium",
+    size = "small",
     srcs = ["evaluator_test.cpp"],
     deps = [
         "//:evaluator_lib",
@@ -71,7 +71,7 @@ cc_test(
 
 cc_test(
     name = "repl_test",
-    size = "medium",
+    size = "small",
     srcs = ["repl_test.cpp"],
     deps = [
         "//:repl_lib",
