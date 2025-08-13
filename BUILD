@@ -7,7 +7,8 @@ cc_library(
     hdrs = ["evaluator.hpp"],
     deps = [
         ":value_lib",
-    ]
+    ],
+    visibility = ["//tests:__pkg__"],
 )
 
 cc_library(
@@ -17,7 +18,8 @@ cc_library(
     deps = [
         ":tokenizer_lib",
         ":value_lib",
-    ]
+    ],
+    visibility = ["//tests:__pkg__"],
 )
 
 cc_library(
@@ -29,19 +31,22 @@ cc_library(
         ":parser_lib",
         ":tokenizer_lib",
         ":value_lib",
-    ]
+    ],
+    visibility = ["//tests:__pkg__"],
 )
 
 cc_library(
     name = "tokenizer_lib",
     srcs = ["tokenizer.cpp"],
     hdrs = ["tokenizer.hpp"],
+    visibility = ["//tests:__pkg__"],
 )
 
 cc_library(
     name = "value_lib",
     srcs = ["value.cpp"],
     hdrs = ["value.hpp"],
+    visibility = ["//tests:__pkg__"],
 )
 
 cc_binary(

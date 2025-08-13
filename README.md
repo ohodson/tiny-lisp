@@ -36,7 +36,7 @@ apt install libc++-19-dev libc++abi-19-dev clang-19 clang-19-doc clangd-19 \
 ### Data Types
 - **Numbers**: Integer and floating-point arithmetic
 - **Strings**: Text literals with escape sequences
-- **Symbols**: Variable and function names  
+- **Symbols**: Variable and function names
 - **Lists**: Cons cells and proper lists
 - **Functions**: Built-in and user-defined lambda functions
 
@@ -45,7 +45,7 @@ apt install libc++-19-dev libc++abi-19-dev clang-19 clang-19-doc clangd-19 \
 #### Arithmetic Operations
 - `(+ a b ...)` - Addition
 - `(- a b ...)` - Subtraction (unary negation with one argument)
-- `(* a b ...)` - Multiplication  
+- `(* a b ...)` - Multiplication
 - `(/ a b ...)` - Division (reciprocal with one argument)
 
 #### List Operations
@@ -86,7 +86,7 @@ lisp> (/ 10 2)
 5
 ```
 
-### List Manipulation  
+### List Manipulation
 ```lisp
 lisp> (cons 1 (cons 2 nil))
 (1 2)

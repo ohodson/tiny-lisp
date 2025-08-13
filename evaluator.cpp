@@ -412,6 +412,10 @@ std::vector<ValuePtr> Evaluator::eval_args(ValuePtr args, Environment& env) {
 }
 
 void Evaluator::setup_builtins() {
+  // Boolean constants
+  global_env->define("#t", make_symbol("#t"));
+  global_env->define("#f", make_symbol("#f"));
+
   // Arithmetic operations
   global_env->define("+", make_builtin(builtin_add));
   global_env->define("-", make_builtin(builtin_subtract));
