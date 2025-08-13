@@ -108,6 +108,7 @@
             "options": [
                 "factorial",
                 "fibonacci",
+                "io_demo",
                 "list_reversal"
             ]
         },

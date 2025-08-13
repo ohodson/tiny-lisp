@@ -1,6 +1,7 @@
 #include "evaluator.hpp"
 
 #include <cstddef>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
@@ -239,6 +240,49 @@ ValuePtr builtin_is_cons(const std::vector<ValuePtr>& args,
   return args[0]->is_cons() ? make_symbol("#t") : make_nil();
 }
 
+//
+// Builtin I/O functions
+//
+
+ValuePtr builtin_print(const std::vector<ValuePtr>& args,
+                       Environment& /*env*/) {
+  if (args.size() != 1) {
+    throw EvalError("print requires exactly one argument");
+  }
+  std::cout << args[0]->to_string() << '\n';
+  return args[0];
+}
+
+ValuePtr builtin_display(const std::vector<ValuePtr>& args,
+                         Environment& /*env*/) {
+  if (args.size() != 1) {
+    throw EvalError("display requires exactly one argument");
+  }
+  std::cout << args[0]->to_string();
+  return args[0];
+}
+
+ValuePtr builtin_newline(const std::vector<ValuePtr>& args,
+                         Environment& /*env*/) {
+  if (!args.empty()) {
+    throw EvalError("newline takes no arguments");
+  }
+  std::cout << '\n';
+  return make_nil();
+}
+
+ValuePtr builtin_read_line(const std::vector<ValuePtr>& args,
+                           Environment& /*env*/) {
+  if (!args.empty()) {
+    throw EvalError("read-line takes no arguments");
+  }
+  std::string line;
+  if (std::getline(std::cin, line)) {
+    return make_string(line);
+  }
+  return make_nil();
+}
+
 }  // namespace
 
 Evaluator::Evaluator() {
@@ -439,6 +483,12 @@ void Evaluator::setup_builtins() {
   global_env->define("string?", make_builtin(builtin_is_string));
   global_env->define("symbol?", make_builtin(builtin_is_symbol));
   global_env->define("cons?", make_builtin(builtin_is_cons));
+
+  // I/O operations
+  global_env->define("print", make_builtin(builtin_print));
+  global_env->define("display", make_builtin(builtin_display));
+  global_env->define("newline", make_builtin(builtin_newline));
+  global_env->define("read-line", make_builtin(builtin_read_line));
 }
 
 }  // namespace lisp
