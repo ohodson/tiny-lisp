@@ -67,6 +67,38 @@
             "stopAtEntry": false,
             "externalConsole": false,
         },
+        {
+            "name": "tiny_lisp test (dbg)",
+            "preLaunchTask": "Bazel build all (dbg)",
+            "request": "launch",
+            "type": "cppdbg",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/bazel-bin/tests/${input:testToDebug}",
+            "linux": {
+                "type": "cppdbg",
+                "request": "launch",
+                "MIMode": "gdb",
+                "miDebuggerArgs": "-d ${workspaceFolder}",
+            },
+            "osx": {
+                "type": "cppdbg",
+                "request": "launch",
+                "MIMode": "lldb",
+                "sourceFileMap": {
+                    "src": "${workspaceFolder}/src",
+                    "bazel-bin": "${workspaceFolder}/bazel-bin",
+                    "bazel-out": "${workspaceFolder}/bazel-out",
+                    "external": "${workspaceFolder}/external"
+                },
+            },
+            "args": [],
+            "windows": {
+                "type": "cppvsdbg",
+                "request": "launch",
+            },
+            "stopAtEntry": false,
+            "externalConsole": false,
+        },
     ],
     "inputs": [
         {
@@ -77,6 +109,18 @@
                 "factorial",
                 "fibonacci",
                 "list_reversal"
+            ]
+        },
+        {
+            "id": "testToDebug",
+            "description": "Select the test to debug",
+            "type": "pickString",
+            "options": [
+                "evaluator_test",
+                "parser_test",
+                "repl_test",
+                "tokenizer_test",
+                "value_test"
             ]
         }
     ]
