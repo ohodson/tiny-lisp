@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-This project uses Bazel as its build system with C++17 and LLVM toolchain.
+This project uses Bazel as its build system with C++20 and LLVM toolchain.
 
 ```bash
 # Build the interpreter
@@ -108,7 +108,7 @@ The interpreter implements a minimal but complete LISP dialect supporting:
 ## Build System Details
 
 Uses Bazel with:
-- C++17 standard with strict warnings (-Wall, -Wextra)
+- C++20 standard with strict warnings (-Wall, -Wextra)
 - LLVM 19.1.0 toolchain
 - Modular library structure matching the architecture
 - Hedron compile commands for IDE integration

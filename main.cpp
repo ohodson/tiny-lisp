@@ -1,7 +1,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
-#include <span>  // Uncomment this if you want to use std::span and your compiler supports C++20
+#include <span>
 #include <string>
 
 #include "repl.hpp"
