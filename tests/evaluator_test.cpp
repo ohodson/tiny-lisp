@@ -2,7 +2,9 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include "parser.hpp"
@@ -378,6 +380,170 @@ TEST_F(EvaluatorTest, CurriedFunctions) {
   auto result = eval_string("(add5 10)");
   EXPECT_TRUE(result->is_number());
   EXPECT_DOUBLE_EQ(result->as_number(), 15.0);
+}
+
+class IOTest : public EvaluatorTest {
+ protected:
+  std::ostringstream captured_output;
+  std::istringstream mock_input;
+  std::streambuf* original_cout;
+  std::streambuf* original_cin;
+
+  void SetUp() override {
+    EvaluatorTest::SetUp();
+    original_cout = std::cout.rdbuf(captured_output.rdbuf());
+    original_cin = std::cin.rdbuf(mock_input.rdbuf());
+  }
+
+  void TearDown() override {
+    std::cout.rdbuf(original_cout);
+    std::cin.rdbuf(original_cin);
+  }
+
+  std::string get_output() {
+    std::string output = captured_output.str();
+    captured_output.str("");
+    captured_output.clear();
+    return output;
+  }
+
+  void set_input(const std::string& input) {
+    mock_input.str(input);
+    mock_input.clear();
+  }
+};
+
+TEST_F(IOTest, PrintFunction) {
+  auto result = eval_string("(print \"hello\")");
+
+  // Check return value
+  EXPECT_TRUE(result->is_string());
+  EXPECT_EQ(result->as_string(), "hello");
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "\"hello\"\n");
+}
+
+TEST_F(IOTest, PrintNumbers) {
+  auto result = eval_string("(print 42)");
+
+  // Check return value
+  EXPECT_TRUE(result->is_number());
+  EXPECT_DOUBLE_EQ(result->as_number(), 42.0);
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "42\n");
+}
+
+TEST_F(IOTest, PrintNil) {
+  auto result = eval_string("(print nil)");
+
+  // Check return value
+  EXPECT_TRUE(result->is_nil());
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "nil\n");
+}
+
+TEST_F(IOTest, DisplayFunction) {
+  auto result = eval_string("(display \"hello\")");
+
+  // Check return value
+  EXPECT_TRUE(result->is_string());
+  EXPECT_EQ(result->as_string(), "hello");
+
+  // Check output (no newline)
+  std::string output = get_output();
+  EXPECT_EQ(output, "\"hello\"");
+}
+
+TEST_F(IOTest, DisplayNumbers) {
+  auto result = eval_string("(display 123)");
+
+  // Check return value
+  EXPECT_TRUE(result->is_number());
+  EXPECT_DOUBLE_EQ(result->as_number(), 123.0);
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "123");
+}
+
+TEST_F(IOTest, NewlineFunction) {
+  auto result = eval_string("(newline)");
+
+  // Check return value
+  EXPECT_TRUE(result->is_nil());
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "\n");
+}
+
+TEST_F(IOTest, ReadLineFunction) {
+  set_input("hello world\n");
+
+  auto result = eval_string("(read-line)");
+
+  // Check return value
+  EXPECT_TRUE(result->is_string());
+  EXPECT_EQ(result->as_string(), "hello world");
+}
+
+TEST_F(IOTest, ReadLineEmpty) {
+  set_input("\n");
+
+  auto result = eval_string("(read-line)");
+
+  // Check return value - empty line should return empty string
+  EXPECT_TRUE(result->is_string());
+  EXPECT_EQ(result->as_string(), "");
+}
+
+TEST_F(IOTest, ReadLineEOF) {
+  set_input("");  // No input, immediate EOF
+
+  auto result = eval_string("(read-line)");
+
+  // Check return value - EOF should return nil
+  EXPECT_TRUE(result->is_nil());
+}
+
+TEST_F(IOTest, CombinedIOOperations) {
+  // Test display followed by newline
+  eval_string("(display \"Hello\")");
+  eval_string("(display \" \")");
+  eval_string("(display \"World\")");
+  eval_string("(newline)");
+
+  std::string output = get_output();
+  EXPECT_EQ(output, "\"Hello\"\" \"\"World\"\n");
+}
+
+TEST_F(IOTest, PrintInExpressions) {
+  // Test that print can be used in larger expressions
+  auto result = eval_string("(+ (print 5) (print 10))");
+
+  // Check return value
+  EXPECT_TRUE(result->is_number());
+  EXPECT_DOUBLE_EQ(result->as_number(), 15.0);
+
+  // Check output
+  std::string output = get_output();
+  EXPECT_EQ(output, "5\n10\n");
+}
+
+TEST_F(EvaluatorTest, IOArgumentErrors) {
+  // Test argument count validation
+  EXPECT_THROW(eval_string("(print)"), EvalError);
+  EXPECT_THROW(eval_string("(print 1 2)"), EvalError);
+  EXPECT_THROW(eval_string("(display)"), EvalError);
+  EXPECT_THROW(eval_string("(display 1 2)"), EvalError);
+  EXPECT_THROW(eval_string("(newline 1)"), EvalError);
+  EXPECT_THROW(eval_string("(read-line 1)"), EvalError);
 }
 
 }  // namespace lisp

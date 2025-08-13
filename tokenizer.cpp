@@ -24,18 +24,24 @@ char Tokenizer::advance() {
   return '\0';
 }
 
-void Tokenizer::skip_whitespace() {
+bool Tokenizer::skip_whitespace() {
+  bool skipped = false;
   while (position < length && std::isspace(peek()) != 0) {
     advance();
+    skipped = true;
   }
+  return skipped;
 }
 
-void Tokenizer::skip_comment() {
+bool Tokenizer::skip_comment() {
+  bool skipped = false;
   if (peek() == ';') {
     while (position < length && peek() != '\n') {
       advance();
     }
+    skipped = true;
   }
+  return skipped;
 }
 
 Token Tokenizer::read_number() {
@@ -108,9 +114,11 @@ Token Tokenizer::read_symbol() {
 }
 
 Token Tokenizer::next_token() {
-  skip_whitespace();
-  skip_comment();
-  skip_whitespace();
+  while (position < length) {
+    if (!skip_whitespace() && !skip_comment()) {
+      break;
+    }
+  }
 
   if (position >= length) {
     return Token(TokenType::EOF_TOKEN, "", position);

@@ -66,5 +66,5 @@ cc_binary(
         ":tokenizer_lib",
         ":value_lib",
     ],
-    data = [ "//examples:factorial.lisp" ]
+    data = [ "//examples:lisp_examples" ]
 )

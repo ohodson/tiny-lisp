@@ -64,6 +64,12 @@ apt install libc++-19-dev libc++abi-19-dev clang-19 clang-19-doc clangd-19 \
 - `(number? x)` - Test if value is a number
 - `(symbol? x)` - Test if value is a symbol
 
+#### I/O Operations
+- `(print value)` - Print value with newline
+- `(display value)` - Print value without newline
+- `(newline)` - Print a newline character
+- `(read-line)` - Read a line from standard input
+
 ### Special Forms
 
 #### Control Flow
@@ -146,7 +152,7 @@ The interpreter is built with a clean modular architecture:
 
 The interpreter provides clear error messages for:
 - Syntax errors during parsing
-- Runtime errors during evaluation  
+- Runtime errors during evaluation
 - Type mismatches in function calls
 - Unbound variable references
 - Division by zero
@@ -158,5 +164,4 @@ This is a minimal LISP implementation focused on core functionality. Notable omi
 - Tail call optimization
 - Garbage collection (relies on C++ smart pointers)
 - Advanced numeric types (complex numbers, rationals)
-- File I/O operations
 - Module system

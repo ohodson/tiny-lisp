@@ -111,6 +111,36 @@ TEST_F(TokenizerTest, Comments) {
                                                {TokenType::RPAREN, ")"}});
 }
 
+TEST_F(TokenizerTest, CommentsAndWhitespaceCombined) {
+  const char* kInput = R"(
+    ; This is a comment.
+    ; This is another comment.
+
+    ; This is a comment after a blank line.
+    (define x 10) ; define x
+    (define y 20) ; define y
+
+    ; Another comment
+
+    (+ x y) ; add x and y
+  )";
+  tokenize_and_check(kInput, {{TokenType::LPAREN, "("},
+                               {TokenType::SYMBOL, "define"},
+                               {TokenType::SYMBOL, "x"},
+                               {TokenType::NUMBER, "10"},
+                               {TokenType::RPAREN, ")"},
+                               {TokenType::LPAREN, "("},
+                               {TokenType::SYMBOL, "define"},
+                               {TokenType::SYMBOL, "y"},
+                               {TokenType::NUMBER, "20"},
+                               {TokenType::RPAREN, ")"},
+                               {TokenType::LPAREN, "("},
+                               {TokenType::SYMBOL, "+"},
+                               {TokenType::SYMBOL, "x"},
+                               {TokenType::SYMBOL, "y"},
+                               {TokenType::RPAREN, ")"}});
+}
+
 TEST_F(TokenizerTest, ComplexExpressions) {
   tokenize_and_check("(+ 1 2)", {{TokenType::LPAREN, "("},
                                  {TokenType::SYMBOL, "+"},
