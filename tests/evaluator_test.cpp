@@ -1,6 +1,7 @@
 #include "evaluator.hpp"
 
 #include <gtest/gtest.h>
+
 #include <memory>
 #include <string>
 

@@ -93,13 +93,9 @@ struct Value : public std::enable_shared_from_this<Value> {
   }
   const Lambda& as_lambda() const { return std::get<Lambda>(data); }
 
-  ValuePtr car() const {
-    return is_cons() ? as_cons().first : nullptr;
-  }
+  ValuePtr car() const { return is_cons() ? as_cons().first : nullptr; }
 
-  ValuePtr cdr() const {
-    return is_cons() ? as_cons().second : nullptr;
-  }
+  ValuePtr cdr() const { return is_cons() ? as_cons().second : nullptr; }
 
   std::string to_string() const;
 };
