@@ -39,8 +39,8 @@ class Tokenizer {
 
   char peek(size_t offset = 0) const;
   char advance();
-  void skip_whitespace();
-  void skip_comment();
+  [[nodiscard]] bool skip_whitespace();
+  [[nodiscard]] bool skip_comment();
   Token read_number();
   Token read_string();
   Token read_symbol();
