@@ -10,18 +10,14 @@ namespace lisp {
 class REPL {
 private:
     Evaluator evaluator;
-    bool running;
-    
-    void print_welcome();
-    std::string read_input();
-    void print_result(ValuePtr result);
-    void print_error(const std::exception& e);
-    
+    bool running = false;
+
 public:
-    REPL();
+    REPL() = default;
+
     void run();
     void stop();
-    
+
     // For non-interactive evaluation
     ValuePtr eval_string(const std::string& input);
 };

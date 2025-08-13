@@ -16,7 +16,15 @@ using ValuePtr = std::shared_ptr<Value>;
 using BuiltinFunction =
     std::function<ValuePtr(const std::vector<ValuePtr>&, Environment&)>;
 
-enum class ValueType { NIL, NUMBER, STRING, SYMBOL, CONS, BUILTIN, LAMBDA };
+enum class ValueType : std::uint8_t {
+  NIL,
+  NUMBER,
+  STRING,
+  SYMBOL,
+  CONS,
+  BUILTIN,
+  LAMBDA
+};
 
 struct Lambda {
   std::vector<std::string> params;
@@ -35,8 +43,8 @@ struct Value : public std::enable_shared_from_this<Value> {
                >
       data;
 
-  Value(ValueType t) : type(t) {
-    switch (t) {
+  explicit Value(ValueType value_type) : type(value_type) {
+    switch (value_type) {
       case ValueType::NIL:
         data = nullptr;
         break;
@@ -45,13 +53,26 @@ struct Value : public std::enable_shared_from_this<Value> {
     }
   }
 
-  Value(double n) : type(ValueType::NUMBER), data(n) {}
-  Value(const std::string& s, ValueType t = ValueType::STRING)
-      : type(t), data(s) {}
-  Value(ValuePtr car, ValuePtr cdr)
+  // Constructor for a NUMBER.
+  explicit Value(double number) : type(ValueType::NUMBER), data(number) {}
+
+  // Constructor for a STRING.
+  explicit Value(const std::string& text)
+      : type(ValueType::STRING), data(text) {}
+
+  // Constructor for either a STRING or a SYMBOL.
+  Value(const std::string& text, ValueType type) : type(type), data(text) {}
+
+  // Constructor for a CONS.
+  Value(ValuePtr& car, ValuePtr& cdr)
       : type(ValueType::CONS), data(std::make_pair(car, cdr)) {}
-  Value(BuiltinFunction func) : type(ValueType::BUILTIN), data(func) {}
-  Value(const Lambda& lambda) : type(ValueType::LAMBDA), data(lambda) {}
+
+  // Constructor for a BUILTIN function.
+  explicit Value(BuiltinFunction func) : type(ValueType::BUILTIN), data(func) {}
+
+  // Constructor for a LAMBDA.
+  explicit Value(const Lambda& lambda)
+      : type(ValueType::LAMBDA), data(lambda) {}
 
   bool is_nil() const { return type == ValueType::NIL; }
   bool is_number() const { return type == ValueType::NUMBER; }
@@ -73,13 +94,11 @@ struct Value : public std::enable_shared_from_this<Value> {
   const Lambda& as_lambda() const { return std::get<Lambda>(data); }
 
   ValuePtr car() const {
-    if (!is_cons()) return nullptr;
-    return as_cons().first;
+    return is_cons() ? as_cons().first : nullptr;
   }
 
   ValuePtr cdr() const {
-    if (!is_cons()) return nullptr;
-    return as_cons().second;
+    return is_cons() ? as_cons().second : nullptr;
   }
 
   std::string to_string() const;
@@ -88,22 +107,22 @@ struct Value : public std::enable_shared_from_this<Value> {
 class Environment : public std::enable_shared_from_this<Environment> {
  private:
   std::map<std::string, ValuePtr> bindings;
-  std::shared_ptr<Environment> parent;
+  std::shared_ptr<Environment> parent = nullptr;
 
  public:
-  Environment(std::shared_ptr<Environment> p = nullptr) : parent(p) {}
+  explicit Environment(std::shared_ptr<Environment> parent = nullptr)
+      : parent(parent) {}
 
   void define(const std::string& name, ValuePtr value) {
-    bindings[name] = value;
+    bindings[name] = std::move(value);
   }
 
   ValuePtr lookup(const std::string& name) {
-    auto it = bindings.find(name);
-    if (it != bindings.end()) {
-      return it->second;
-    }
-    if (parent) {
-      return parent->lookup(name);
+    for (Environment* env = this; env != nullptr; env = env->parent.get()) {
+      const auto& binding = env->bindings.find(name);
+      if (binding != env->bindings.end()) {
+        return binding->second;
+      }
     }
     return nullptr;
   }
@@ -115,11 +134,11 @@ class Environment : public std::enable_shared_from_this<Environment> {
 
 ValuePtr make_nil();
 ValuePtr make_number(double n);
-ValuePtr make_string(const std::string& s);
-ValuePtr make_symbol(const std::string& s);
+ValuePtr make_string(const std::string& text);
+ValuePtr make_symbol(const std::string& symbol);
 ValuePtr make_cons(ValuePtr car, ValuePtr cdr);
-ValuePtr make_builtin(BuiltinFunction func);
-ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr body,
-                     std::shared_ptr<Environment> closure);
+ValuePtr make_builtin(const BuiltinFunction& func);
+ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr& body,
+                     std::shared_ptr<Environment>&& closure);
 
 }  // namespace lisp

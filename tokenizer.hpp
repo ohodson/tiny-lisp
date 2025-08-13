@@ -17,12 +17,18 @@ enum class TokenType : std::uint8_t {
 };
 
 struct Token {
-  TokenType type;
-  std::string value;
-  size_t position;
+ private:
+  TokenType type_;
+  std::string value_;
+  size_t position_;
 
-  Token(TokenType t, const std::string& v, size_t pos)
-      : type(t), value(v), position(pos) {}
+ public:
+  Token(TokenType type, const std::string& value, size_t position)
+      : type_(type), value_(value), position_(position) {}
+
+  TokenType type() const { return type_; }
+  const std::string& value() const { return value_; }
+  size_t position() const { return position_; }
 };
 
 class Tokenizer {
@@ -40,7 +46,7 @@ class Tokenizer {
   Token read_symbol();
 
  public:
-  Tokenizer(const std::string& input);
+  explicit Tokenizer(const std::string& input);
   std::vector<Token> tokenize();
   Token next_token();
 };
