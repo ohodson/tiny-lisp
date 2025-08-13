@@ -1,6 +1,9 @@
 ---
 Checks: |
   abseil-*,boost-*,bugprone-*,cert-*,clang-analyzer-*,concurrency-*,
-  cppcoreguidelines-*,google-*,hicpp-*,misc-*,-misc-no-recursion,performance-*,
-  portability-*,readability-*
+  cppcoreguidelines-*,google-*,hicpp-*,misc-*,
+  -misc-no-recursion,-misc-non-private-member-variables-in-classes,
+  performance-*, portability-*,
+  readability-*,
+  -readability-magic-numbers
 # modernize-*

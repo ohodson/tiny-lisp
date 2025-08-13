@@ -10,11 +10,21 @@ This project uses Bazel as its build system with C++17 and LLVM toolchain.
 # Build the interpreter
 bazel build :tiny_lisp
 
-# Run in interactive REPL mode  
+# Run in interactive REPL mode
 bazel run :tiny_lisp
 
 # Run a LISP file
 bazel run :tiny_lisp -- examples/factorial.lisp
+
+# Run all unit tests
+bazel test //tests:all_tests
+
+# Run specific test suites
+bazel test //tests:value_test
+bazel test //tests:tokenizer_test
+bazel test //tests:parser_test
+bazel test //tests:evaluator_test
+bazel test //tests:repl_test
 
 # Generate compile_commands.json for IDE support
 bazel run @hedron_compile_commands//:refresh_all
@@ -49,7 +59,7 @@ The interpreter follows a clean modular design with clear separation of concerns
    - Builds Value objects representing parsed expressions
    - Depends on tokenizer and value system
 
-4. **Evaluator** (`evaluator.hpp/cpp`)  
+4. **Evaluator** (`evaluator.hpp/cpp`)
    - Core evaluation engine for LISP expressions
    - Contains all built-in functions (arithmetic, list ops, predicates)
    - Handles special forms (if, quote, lambda, define)
@@ -88,15 +98,44 @@ The interpreter implements a minimal but complete LISP dialect supporting:
 - Arithmetic operations with variadic arguments
 - List manipulation (car, cdr, cons, list)
 - Conditional evaluation (if)
-- Function definition (lambda) and variable binding (define)  
+- Function definition (lambda) and variable binding (define)
 - Lexical scoping and closures
 - Quote mechanism for preventing evaluation
+- Boolean constants (#t and #f)
+- Comparison operations (=, <, >)
+- Type predicates (null?, number?, string?, symbol?, cons?)
 
 ## Build System Details
 
 Uses Bazel with:
 - C++17 standard with strict warnings (-Wall, -Wextra)
-- LLVM 19.1.0 toolchain 
+- LLVM 19.1.0 toolchain
 - Modular library structure matching the architecture
 - Hedron compile commands for IDE integration
 - Example files included as build data
+- GoogleTest framework for comprehensive unit testing
+
+## Testing
+
+The project includes a comprehensive test suite with:
+
+### Test Coverage
+- **Value System Tests** (`tests/value_test.cpp`): Tests for Value types, Environment management, and memory handling
+- **Tokenizer Tests** (`tests/tokenizer_test.cpp`): Lexical analysis, token generation, position tracking, and error handling
+- **Parser Tests** (`tests/parser_test.cpp`): AST construction, syntax validation, quote handling, and parse error detection
+- **Evaluator Tests** (`tests/evaluator_test.cpp`): Expression evaluation, built-in functions, special forms, lambda calls, and lexical scoping
+- **REPL Integration Tests** (`tests/repl_test.cpp`): End-to-end functionality, persistent environment, and complex program execution
+
+### Test Organization
+- Each component has dedicated unit tests in `tests/` directory
+- Tests use GoogleTest framework with clear test fixtures
+- Build integration with Bazel for easy execution
+- Comprehensive error condition testing
+- Performance and edge case validation
+
+### Test Examples
+- Basic arithmetic: `(+ 1 2 3)` → `6`
+- List operations: `(car '(a b c))` → `a`
+- Lambda functions: `((lambda (x) (* x x)) 5)` → `25`
+- Recursion: Factorial implementation with tail-call testing
+- Lexical scoping: Closure behavior and environment chaining
