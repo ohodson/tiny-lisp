@@ -8,18 +8,18 @@
 namespace lisp {
 
 class REPL {
-private:
-    Evaluator evaluator;
-    bool running = false;
+ private:
+  Evaluator evaluator;
+  bool running = false;
 
-public:
-    REPL() = default;
+ public:
+  REPL() = default;
 
-    void run();
-    void stop();
+  void run();
+  void stop();
 
-    // For non-interactive evaluation
-    ValuePtr eval_string(const std::string& input);
+  // For non-interactive evaluation
+  ValuePtr eval_string(const std::string& input);
 };
 
 }  // namespace lisp

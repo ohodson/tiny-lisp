@@ -295,8 +295,8 @@ ValuePtr Evaluator::do_if(const ValuePtr& if_args, Environment& env) {
   }
 
   ValuePtr const else_branch = if_args->cdr()->cdr()->is_cons()
-                             ? if_args->cdr()->cdr()->car()
-                             : make_nil();
+                                   ? if_args->cdr()->cdr()->car()
+                                   : make_nil();
   return eval(else_branch, env);
 }
 

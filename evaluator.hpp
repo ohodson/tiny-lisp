@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 #include "value.hpp"
 

@@ -132,7 +132,8 @@ Token Tokenizer::next_token() {
     case '"':
       return read_string();
     default:
-      if ((std::isdigit(glyph) != 0) || (glyph == '-' && (std::isdigit(peek(1)) != 0)) ||
+      if ((std::isdigit(glyph) != 0) ||
+          (glyph == '-' && (std::isdigit(peek(1)) != 0)) ||
           (glyph == '+' && (std::isdigit(peek(1)) != 0))) {
         return read_number();
       } else {
