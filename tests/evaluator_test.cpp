@@ -17,7 +17,7 @@ class EvaluatorTest : public ::testing::Test {
  protected:
   void SetUp() override { evaluator = std::make_unique<Evaluator>(); }
 
-  ValuePtr eval_string(const std::string& input) {
+  ValuePtr eval_string(std::string const& input) {
     Tokenizer tokenizer(input);
     auto tokens = tokenizer.tokenize();
     Parser parser(tokens);
@@ -384,11 +384,6 @@ TEST_F(EvaluatorTest, CurriedFunctions) {
 
 class IOTest : public EvaluatorTest {
  protected:
-  std::ostringstream captured_output;
-  std::istringstream mock_input;
-  std::streambuf* original_cout;
-  std::streambuf* original_cin;
-
   void SetUp() override {
     EvaluatorTest::SetUp();
     original_cout = std::cout.rdbuf(captured_output.rdbuf());
@@ -407,10 +402,16 @@ class IOTest : public EvaluatorTest {
     return output;
   }
 
-  void set_input(const std::string& input) {
+  void set_input(std::string const& input) {
     mock_input.str(input);
     mock_input.clear();
   }
+
+ private:
+  std::ostringstream captured_output;
+  std::istringstream mock_input;
+  std::streambuf* original_cout = nullptr;
+  std::streambuf* original_cin = nullptr;
 };
 
 TEST_F(IOTest, PrintFunction) {
@@ -421,7 +422,7 @@ TEST_F(IOTest, PrintFunction) {
   EXPECT_EQ(result->as_string(), "hello");
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "\"hello\"\n");
 }
 
@@ -433,7 +434,7 @@ TEST_F(IOTest, PrintNumbers) {
   EXPECT_DOUBLE_EQ(result->as_number(), 42.0);
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "42\n");
 }
 
@@ -444,7 +445,7 @@ TEST_F(IOTest, PrintNil) {
   EXPECT_TRUE(result->is_nil());
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "nil\n");
 }
 
@@ -456,7 +457,7 @@ TEST_F(IOTest, DisplayFunction) {
   EXPECT_EQ(result->as_string(), "hello");
 
   // Check output (no newline)
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "\"hello\"");
 }
 
@@ -468,7 +469,7 @@ TEST_F(IOTest, DisplayNumbers) {
   EXPECT_DOUBLE_EQ(result->as_number(), 123.0);
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "123");
 }
 
@@ -479,7 +480,7 @@ TEST_F(IOTest, NewlineFunction) {
   EXPECT_TRUE(result->is_nil());
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "\n");
 }
 
@@ -519,7 +520,7 @@ TEST_F(IOTest, CombinedIOOperations) {
   eval_string("(display \"World\")");
   eval_string("(newline)");
 
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "\"Hello\"\" \"\"World\"\n");
 }
 
@@ -532,7 +533,7 @@ TEST_F(IOTest, PrintInExpressions) {
   EXPECT_DOUBLE_EQ(result->as_number(), 15.0);
 
   // Check output
-  std::string output = get_output();
+  std::string const output = get_output();
   EXPECT_EQ(output, "5\n10\n");
 }
 
