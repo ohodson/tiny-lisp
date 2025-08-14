@@ -28,7 +28,7 @@ enum class ValueType : std::uint8_t {
 
 struct Lambda {
   std::vector<std::string> params;
-  ValuePtr body;
+  std::vector<ValuePtr> body;
   std::shared_ptr<Environment> closure;
 };
 
@@ -134,7 +134,8 @@ ValuePtr make_string(const std::string& text);
 ValuePtr make_symbol(const std::string& symbol);
 ValuePtr make_cons(ValuePtr car, ValuePtr cdr);
 ValuePtr make_builtin(const BuiltinFunction& func);
-ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr& body,
+ValuePtr make_lambda(const std::vector<std::string>& params,
+                     const std::vector<ValuePtr>& body,
                      std::shared_ptr<Environment>&& closure);
 
 }  // namespace lisp

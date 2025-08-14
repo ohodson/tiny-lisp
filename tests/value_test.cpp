@@ -91,31 +91,27 @@ TEST_F(ValueTest, ConsValue) {
 }
 
 TEST_F(ValueTest, BuiltinValue) {
-  constexpr double kTestNumber = 42.0;
   auto builtin_func = [](const std::vector<ValuePtr>& /*args*/,
                          Environment& /*env*/) -> ValuePtr {
-    return make_number(kTestNumber);
+    return make_string("builtin");
   };
-  auto builtin_val = make_builtin(builtin_func);
+  ValuePtr const builtin_val = make_builtin(builtin_func);
 
-  EXPECT_FALSE(builtin_val->is_nil());
-  EXPECT_FALSE(builtin_val->is_number());
-  EXPECT_FALSE(builtin_val->is_string());
-  EXPECT_FALSE(builtin_val->is_symbol());
-  EXPECT_FALSE(builtin_val->is_cons());
-  EXPECT_TRUE(builtin_val->is_builtin());
-  EXPECT_FALSE(builtin_val->is_lambda());
   EXPECT_EQ(builtin_val->type, ValueType::BUILTIN);
+  EXPECT_TRUE(builtin_val->is_builtin());
+  EXPECT_FALSE(builtin_val->is_nil() || builtin_val->is_number() ||
+               builtin_val->is_string() || builtin_val->is_symbol() ||
+               builtin_val->is_cons() || builtin_val->is_lambda());
 
   std::vector<ValuePtr> const args;
-  auto result = builtin_val->as_builtin()(args, *env);
-  EXPECT_TRUE(result->is_number());
-  EXPECT_DOUBLE_EQ(result->as_number(), kTestNumber);
+  ValuePtr const result = builtin_val->as_builtin()(args, *env);
+  EXPECT_TRUE(result->is_string());
+  EXPECT_EQ(result->as_string(), "builtin");
 }
 
 TEST_F(ValueTest, LambdaValue) {
   std::vector<std::string> const params = {"x", "y"};
-  auto body = make_symbol("+");
+  std::vector<ValuePtr> body = {make_symbol("+")};
   auto closure = std::make_shared<Environment>();
   auto lambda_val = make_lambda(params, body, std::move(closure));
 

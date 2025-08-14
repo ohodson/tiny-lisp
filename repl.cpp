@@ -18,11 +18,15 @@ void print_welcome() {
   std::cout << "Example: (+ 1 2 3)\n\n";
 }
 
-std::string read_input() {
+[[nodiscard]] bool read_input(std::string& input) {
+  if (std::cin.eof() || std::cin.bad()) {
+    return false;
+  }
   std::cout << "lisp> ";
   std::string line;
   std::getline(std::cin, line);
-  return line;
+  input = line;
+  return true;
 }
 
 void print_result(const ValuePtr& result) {
@@ -57,9 +61,12 @@ void REPL::run() {
   print_welcome();
   running = true;
 
+  std::string input;
   while (running) {
     try {
-      std::string const input = read_input();
+      if (!read_input(input)) {
+        break;
+      }
 
       // Handle special commands
       if (input == "quit" || input == "exit" || input == ":q") {

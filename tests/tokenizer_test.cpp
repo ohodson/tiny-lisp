@@ -125,20 +125,20 @@ TEST_F(TokenizerTest, CommentsAndWhitespaceCombined) {
     (+ x y) ; add x and y
   )";
   tokenize_and_check(kInput, {{TokenType::LPAREN, "("},
-                               {TokenType::SYMBOL, "define"},
-                               {TokenType::SYMBOL, "x"},
-                               {TokenType::NUMBER, "10"},
-                               {TokenType::RPAREN, ")"},
-                               {TokenType::LPAREN, "("},
-                               {TokenType::SYMBOL, "define"},
-                               {TokenType::SYMBOL, "y"},
-                               {TokenType::NUMBER, "20"},
-                               {TokenType::RPAREN, ")"},
-                               {TokenType::LPAREN, "("},
-                               {TokenType::SYMBOL, "+"},
-                               {TokenType::SYMBOL, "x"},
-                               {TokenType::SYMBOL, "y"},
-                               {TokenType::RPAREN, ")"}});
+                              {TokenType::SYMBOL, "define"},
+                              {TokenType::SYMBOL, "x"},
+                              {TokenType::NUMBER, "10"},
+                              {TokenType::RPAREN, ")"},
+                              {TokenType::LPAREN, "("},
+                              {TokenType::SYMBOL, "define"},
+                              {TokenType::SYMBOL, "y"},
+                              {TokenType::NUMBER, "20"},
+                              {TokenType::RPAREN, ")"},
+                              {TokenType::LPAREN, "("},
+                              {TokenType::SYMBOL, "+"},
+                              {TokenType::SYMBOL, "x"},
+                              {TokenType::SYMBOL, "y"},
+                              {TokenType::RPAREN, ")"}});
 }
 
 TEST_F(TokenizerTest, ComplexExpressions) {

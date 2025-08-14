@@ -367,7 +367,7 @@ ValuePtr Evaluator::do_lambda(const ValuePtr& lambda_args, Environment& env) {
   }
 
   ValuePtr const params_list = lambda_args->car();
-  ValuePtr body = lambda_args->cdr()->car();
+  ValuePtr body_list = lambda_args->cdr();
 
   std::vector<std::string> params;
   ValuePtr current = params_list;
@@ -378,6 +378,18 @@ ValuePtr Evaluator::do_lambda(const ValuePtr& lambda_args, Environment& env) {
     }
     params.push_back(param->as_symbol());
     current = current->cdr();
+  }
+
+  // Collect all body expressions
+  std::vector<ValuePtr> body;
+  current = body_list;
+  while (current && current->is_cons()) {
+    body.push_back(current->car());
+    current = current->cdr();
+  }
+
+  if (body.empty()) {
+    throw EvalError("lambda requires at least one body expression");
   }
 
   return make_lambda(params, body,
@@ -438,7 +450,12 @@ ValuePtr Evaluator::eval_list(const ValuePtr& expr, Environment& env) {
       new_env->define(lambda.params[i], arg_values[i]);
     }
 
-    return eval(lambda.body, *new_env);
+    // Evaluate all body expressions sequentially, return result of last one
+    ValuePtr result;
+    for (const auto& expr : lambda.body) {
+      result = eval(expr, *new_env);
+    }
+    return result;
   }
 
   throw EvalError("Cannot call non-function: " + func->to_string());
