@@ -18,4 +18,5 @@
       lst)))
 
 (define test-numbers '(64 34 25 12 22 11 90))
-(bubble-sort test-numbers)
+(define sorted-result (bubble-sort test-numbers))
+sorted-result

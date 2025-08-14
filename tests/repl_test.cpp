@@ -202,7 +202,7 @@ TEST_F(REPLTest, EvalStringListProcessing) {
   EXPECT_DOUBLE_EQ(result->as_number(), 4.0);
 
   repl->eval_string(R"(
-        (define reverse-helper 
+        (define reverse-helper
           (lambda (lst acc)
             (if (null? lst)
                 acc
@@ -290,6 +290,19 @@ TEST_F(REPLTest, EvalStringHigherOrderFunctions) {
   EXPECT_DOUBLE_EQ(result->cdr()->car()->as_number(), 4.0);
   EXPECT_TRUE(result->cdr()->cdr()->car()->is_number());
   EXPECT_DOUBLE_EQ(result->cdr()->cdr()->car()->as_number(), 6.0);
+}
+
+TEST_F(REPLTest, EvalLambdaWithMultipleBodyComponents) {
+  repl->eval_string(R"(
+        (define multi-body
+          (lambda (x)
+            (define a (+ x 1))
+            (define b (+ x 2))
+            (+ a b)))
+    )");
+  auto result = repl->eval_string("(multi-body 5)");
+  EXPECT_TRUE(result->is_number());
+  EXPECT_DOUBLE_EQ(result->as_number(), 13.0);
 }
 
 }  // namespace lisp

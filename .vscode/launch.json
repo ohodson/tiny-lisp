@@ -106,10 +106,13 @@
             "description": "Select the example to debug",
             "type": "pickString",
             "options": [
+                "bubble_sort",
                 "factorial",
                 "fibonacci",
                 "io_demo",
-                "list_reversal"
+                "list_reversal",
+                "nest_lambda_bug",
+                "simple_lambda"
             ]
         },
         {

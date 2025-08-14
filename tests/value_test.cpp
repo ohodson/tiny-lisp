@@ -111,7 +111,7 @@ TEST_F(ValueTest, BuiltinValue) {
 
 TEST_F(ValueTest, LambdaValue) {
   std::vector<std::string> const params = {"x", "y"};
-  auto body = make_symbol("+");
+  std::vector<ValuePtr> body = {make_symbol("+")};
   auto closure = std::make_shared<Environment>();
   auto lambda_val = make_lambda(params, body, std::move(closure));
 

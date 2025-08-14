@@ -75,7 +75,8 @@ ValuePtr make_builtin(const BuiltinFunction& func) {
   return std::make_shared<Value>(func);
 }
 
-ValuePtr make_lambda(const std::vector<std::string>& params, ValuePtr& body,
+ValuePtr make_lambda(const std::vector<std::string>& params,
+                     const std::vector<ValuePtr>& body,
                      std::shared_ptr<Environment>&& closure) {
   Lambda const lambda{params, body, std::move(closure)};
   return std::make_shared<Value>(lambda);
